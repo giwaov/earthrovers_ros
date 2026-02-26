@@ -106,7 +106,7 @@ class CameraNode(Node):
         earth_rover_sdk_url = self.get_parameter("earthrover_sdk_url").get_parameter_value().string_value
         start = time.perf_counter()
         try:
-            response = requests.get(f"{earth_rover_sdk_url}/screenshot?view_types=front")
+            response = requests.get(f"{earth_rover_sdk_url}/screenshot?view_types=front", timeout=5.0)
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             self.get_logger().error(f"Failed to get front camera image: {e}")
@@ -148,7 +148,7 @@ class CameraNode(Node):
         earth_rover_sdk_url = self.get_parameter("earthrover_sdk_url").get_parameter_value().string_value
         start = time.perf_counter()
         try:
-            response = requests.get(f"{earth_rover_sdk_url}/screenshot?view_types=rear")
+            response = requests.get(f"{earth_rover_sdk_url}/screenshot?view_types=rear", timeout=5.0)
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             self.get_logger().error(f"Failed to get rear camera image: {e}")
@@ -189,7 +189,7 @@ class CameraNode(Node):
         earth_rover_sdk_url = self.get_parameter("earthrover_sdk_url").get_parameter_value().string_value
         start = time.perf_counter()
         try:
-            response = requests.get(f"{earth_rover_sdk_url}/screenshot?view_types=map")
+            response = requests.get(f"{earth_rover_sdk_url}/screenshot?view_types=map", timeout=5.0)
             response.raise_for_status()
         except requests.exceptions.RequestException as e:
             self.get_logger().error(f"Failed to get map image: {e}")

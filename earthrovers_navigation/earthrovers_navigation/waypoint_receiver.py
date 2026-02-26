@@ -26,14 +26,15 @@ class WaypointReceiverNode(Node):
         check_checkpoint_reached_period = 5.0
         self.create_timer(get_checkpoint_list_period, self.get_checkpoints_list)
         self.create_timer(check_checkpoint_reached_period, self.check_checkpoint_reached)
-        self.earthrover_sdk_url = "http://127.0.0.1:8000"
+        self.declare_parameter("earthrover_sdk_url", "http://127.0.0.1:8000")
+        self.earthrover_sdk_url = self.get_parameter("earthrover_sdk_url").get_parameter_value().string_value
 
     def get_checkpoints_list(self):
         checkpoints_list = GeoPath()
         latest_scanned_checkpoint = -1
         start_time = time.time()
         try:
-            checkpoints_list_response = requests.get(f"{self.earthrover_sdk_url}/checkpoints-list")
+            checkpoints_list_response = requests.get(f"{self.earthrover_sdk_url}/checkpoints-list", timeout=5.0)
             # Parse the checkpoints from the response and create a list of
             # of Waypoint messages.
             if checkpoints_list_response.status_code == 200:
@@ -54,17 +55,20 @@ class WaypointReceiverNode(Node):
 
         except requests.exceptions.RequestException as e:
             self.get_logger().error(f"Failed to get checkpoints list: {e}")
-            raise Exception("Failed to get checkpoints list.")
+            return
         print("Published checkpoints list of length: ", len(checkpoints_list.poses))
         print([f"{pose.pose.position.latitude}, {pose.pose.position.longitude}" for pose in checkpoints_list.poses])
         self.waypoints_pub.publish(checkpoints_list)
 
     def check_checkpoint_reached(self):
         start_time = time.time()
-        checkpoint_reached_response = requests.post(f"{self.earthrover_sdk_url}/checkpoint-reached", json={})
-        checkpoint_reached_response_json = checkpoint_reached_response.json()
-        print(f"Checkpoint reached response: {checkpoint_reached_response_json}")
-        print(f"Time taken to get checkpoint reached response: {time.time() - start_time}")
+        try:
+            checkpoint_reached_response = requests.post(f"{self.earthrover_sdk_url}/checkpoint-reached", json={}, timeout=5.0)
+            checkpoint_reached_response_json = checkpoint_reached_response.json()
+            print(f"Checkpoint reached response: {checkpoint_reached_response_json}")
+            print(f"Time taken to get checkpoint reached response: {time.time() - start_time}")
+        except requests.exceptions.RequestException as e:
+            self.get_logger().error(f"Failed to check checkpoint reached: {e}")
 
 
 def main(args=None):

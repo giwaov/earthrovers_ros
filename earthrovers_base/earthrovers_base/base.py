@@ -114,7 +114,7 @@ class BaseNode(Node):
         # Finally, send the POST request to the SDK API.
         start = time.perf_counter()
         try:
-            response = requests.post(f"{sdk_url}/control", json=payload)
+            response = requests.post(f"{sdk_url}/control", json=payload, timeout=5.0)
         except requests.exceptions.RequestException as e:
             self.get_logger().error(f"POST request to SDK API failed: {e}")
             return
@@ -146,7 +146,7 @@ class BaseNode(Node):
         start = time.perf_counter()
         try:
             self.get_logger().debug(f"Making GET request to {earthrover_sdk_url}/data")
-            response = requests.get(f"{earthrover_sdk_url}/data")
+            response = requests.get(f"{earthrover_sdk_url}/data", timeout=5.0)
         except requests.exceptions.RequestException as e:
             self.get_logger().error(f"Failed to get data: {e}")
             return

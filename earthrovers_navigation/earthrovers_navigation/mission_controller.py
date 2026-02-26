@@ -42,7 +42,7 @@ class MissionController(Node):
         try:
             self.get_logger().info("Making request to start mission.")
             self.get_logger().debug(f"Making POST request to {earthrover_sdk_url}/start_mission")
-            post_response = requests.post(f"{earthrover_sdk_url}/start-mission")
+            post_response = requests.post(f"{earthrover_sdk_url}/start-mission", timeout=5.0)
         except requests.exceptions.RequestException as e:
             self.get_logger().error(f"Failed to start mission: {e}")
             response.mission_started = False
@@ -87,7 +87,7 @@ class MissionController(Node):
         try:
             self.get_logger().info("Making request to end mission.")
             self.get_logger().debug(f"Making POST request to {earthrover_sdk_url}/end_mission")
-            post_response = requests.post(f"{earthrover_sdk_url}/end-mission")
+            post_response = requests.post(f"{earthrover_sdk_url}/end-mission", timeout=5.0)
         except requests.exceptions.RequestException as e:
             self.get_logger().error(f"Failed to end mission: {e}")
             response.mission_ended = False
@@ -138,7 +138,7 @@ class MissionController(Node):
         try:
             self.get_logger().info("Making request to checkpoint reached.")
             self.get_logger().debug(f"Making POST request to {earthrover_sdk_url}/checkpoint-reached")
-            post_response = requests.post(f"{earthrover_sdk_url}/checkpoint-reached", json={})
+            post_response = requests.post(f"{earthrover_sdk_url}/checkpoint-reached", json={}, timeout=5.0)
         except requests.exceptions.RequestException as e:
             self.get_logger().error(f"Failed to check if checkpoint reached with error: {e}")
             response.checkpoint_reached = False
@@ -199,7 +199,7 @@ class MissionController(Node):
         try:
             self.get_logger().info("Making request to get checkpoints.")
             self.get_logger().debug(f"Making GET request to {earthrover_sdk_url}/checkpoints-list")
-            get_response = requests.get(f"{earthrover_sdk_url}/checkpoints-list")
+            get_response = requests.get(f"{earthrover_sdk_url}/checkpoints-list", timeout=5.0)
         except requests.exceptions.RequestException as e:
             self.get_logger().error(f"Request to get checkpoints failed with error: {e}")
             response.checkpoints = []
